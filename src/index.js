@@ -2,26 +2,13 @@ import plugins from './plugins';
 import config  from './config';
 import Game from './Game';
 import ScreenManager from './screenManager/ScreenManager';
-import PrototypeScreen from './game/screen/PrototypeScreen';
+import GameScreen from './game/screen/GameScreen';
+import LoadScreen from './game/screen/LoadScreen';
 
 
 
 PIXI.loader
-	.add('./assets/Enemies/enemies0.json')
-	.add('./assets/Enemies/enemies1.json')
-	.add('./assets/Enemies/enemies2.json')
-	// .add('./assets/Cupcake/cupcake0.json')
-	// .add('./assets/Cupcake/cupcake1.json')
-	// .add('./assets/Cupcake/cupcake2.json')
-	// .add('./assets/Cupcake/cupcake3.json')
-	.add('./assets/Cupcake/cupcakeMini0.json')
-	.add('./assets/Cupcake/cupcakeMini1.json')
-	.add('./assets/Environment/environment0.json')
-	.add('./assets/Effects/effects0.json')
-	.add('./assets/Towers/towers0.json')
-	.add('./assets/Spawners/spawners0.json')
-	.add('./assets/UI/ui0.json')
-	.add('./assets/data/map_data_1.json')
+	.add('./assets/map.json')
 	.load(configGame);
 
 function configGame(){
@@ -31,13 +18,15 @@ function configGame(){
 	//create screen manager
 	let screenManager = new ScreenManager();
 	//add screens
-	let startScreen = new PrototypeScreen('PrototypeScreen');
+	let gameScreen = new GameScreen('GameScreen');
+	let loadScreen = new LoadScreen('LoadScreen');
 
 	game.stage.addChild(screenManager);
 
-	screenManager.addScreen(startScreen);
+	screenManager.addScreen(gameScreen);
+	screenManager.addScreen(loadScreen);
 	//change to init screen
-	screenManager.forceChange('PrototypeScreen');	
+	screenManager.forceChange('LoadScreen');	
 
 	game.start();
 }

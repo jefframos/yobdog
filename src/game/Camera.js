@@ -23,24 +23,17 @@ export default class Camera{
 		this.maxZoom = 1.1;
 		// this.maxZoom = 1.2;
 		this.minZoom = 0.055;
+
+		this.bounds = {x:config.width * 0.2, y:config.height * 0.2, w:config.width - config.width * 0.4, h:config.height - config.height * 0.4}
 		//se a distancia minima da camera for pequena, parece que o cara ta bebado
+		this.cameraBounds = new PIXI.Graphics().lineStyle(1, 0xFF0000).drawRect(this.bounds.x,this.bounds.y,this.bounds.w,this.bounds.h);
+		this.worldMap.parent.addChild(this.cameraBounds);
 	}
 	
 	follow(entity){
 		this.entityFollow = entity;
 
-		console.log('FOLLOW');
 		this.updatePosition(true);
-
-		this.startDelay = 1;
-
-		// if(this.entityFollow.entityModel && this.entityFollow.entityModel.speed){
-		// 	this.cameraSpeed = {x:this.entityFollow.entityModel.speed.x, y:this.entityFollow.entityModel.speed.y};
-		// 	console.log(this.cameraSpeed);
-		// }else{
-		// 	this.cameraSpeed = {x:config.width * 0.5, y:config.height * 0.5};
-		// }
-		// this.acceleration = {x:this.cameraSpeed.x*0.01, y:this.cameraSpeed.y*0.01};
 	}
 
 	unfollow(){
@@ -68,12 +61,15 @@ export default class Camera{
 	zoom(value, time, delay){
 
 
-		this.currentZoom = value;		
+		this.currentZoom = value;	
+		TweenLite.killTweensOf(this.worldMap.scale)
 		TweenLite.to(this.worldMap.scale, time?time:0.5, {delay:delay?delay:0, x:this.currentZoom, y:this.currentZoom});//, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
 		//this.worldMap.scale.set(value);//, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
 	}
 	updatePosition(force){
-
+		if(!this.entityFollow){
+			return
+		}
 		if(force){
 			console.log('force');
 		}
@@ -104,14 +100,12 @@ export default class Camera{
 
 		let middleDistance = utils.distance(globalEntityPosition.x, globalEntityPosition.y, config.width/2, config.height/2);
 		// console.log(middleDistance);
-		if(middleDistance > 20){
-			// this.worldMap.pivot.x =this.entityFollow.x
-			// this.worldMap.pivot.y = this.entityFollow.y
-			// this.worldMap.x = config.width / 2 - globalEntityPosition.x
-			// console.log(config.width / 2 , globalEntityPosition.x, globalWorldPosition.x);
-			TweenLite.to(this.worldMap.pivot, 1 ,{x:this.entityFollow.x, y:this.entityFollow.y});
-			TweenLite.to(this.worldMap, 1 ,{x:config.width / 2, y:config.height / 2});
-			//TweenLite.to(this.worldMap, 1 ,{x:config.width / 2 - globalEntityPosition.x +  globalWorldPosition.x, y:config.height / 2 - globalEntityPosition.y +  globalWorldPosition.y});
+		if(globalEntityPosition.x < this.bounds.x){
+			this.worldMap.pivot = {x:this.entityFollow.x, y:this.entityFollow.y}
+			this.worldMap.x = this.bounds.x
+		}else if(globalEntityPosition.x > this.bounds.x + this.bounds.w){
+			this.worldMap.pivot = {x:this.entityFollow.x, y:this.entityFollow.y}
+			this.worldMap.x = this.bounds.x + this.bounds.w
 		}
 	}
 	update(delta){
@@ -126,47 +120,6 @@ export default class Camera{
 		}
 
 		this.updatePosition();
-		// if(Math.abs(this.entityFollow.velocity.y) + Math.abs(this.entityFollow.velocity.x)){
-		// }
-		// let globalEntityPosition = this.entityFollow.toGlobal(new PIXI.Point());
-		// let globalWorldPosition = this.worldMap.toGlobal(new PIXI.Point());
-		// // console.log(this.worldMap.x, globalEntityPosition.x);
-
-		// let middleDistance = utils.distance(globalEntityPosition.x, globalEntityPosition.y, config.width/2, config.height/2);
-		// // console.log(middleDistance);
-		// if(middleDistance > 20){
-		// 	// this.worldMap.x = config.width / 2 - globalEntityPosition.x
-		// 	// console.log(config.width / 2 , globalEntityPosition.x, globalWorldPosition.x);
-		// 	TweenLite.to(this.worldMap, 1 ,{x:config.width / 2 - globalEntityPosition.x +  globalWorldPosition.x, y:config.height / 2 - globalEntityPosition.y +  globalWorldPosition.y});
-		// }
-		// console.log(middleDistance);
-		// if(middleDistance >  config.width * 0.1){
-		// 	let percentageOfMiddleX = middleDistance / config.width * 0.2;
-		// 	this.velocityPlus.x = this.cameraSpeed.x * percentageOfMiddleX;
-		// }
-		// if(middleDistance >  config.height * 0.1){
-		// 	let percentageOfMiddleY = middleDistance / config.height * 0.2;
-		// 	this.velocityPlus.y = this.cameraSpeed.y * percentageOfMiddleY;
-		// }
-
-
-		// if(this.cameraDelay.x > 0){
-		// 	// console.log(delta);
-		// 	this.cameraDelay.x -= delta;
-		// }
-		// //console.log(this.cameraDelay.x);
-		// if(this.virtualVelocity.x != 0){
-		// 	this.cameraMoving.x = true;
-		// }else{
-		// 	this.cameraMoving.x = false;
-		// }
-
-		//this.updateX(globalEntityPosition);
-		//this.updateY(globalEntityPosition);
-
-
-		//this.worldMap.x += (this.velocity.x + this.velocityPlus.x) * delta // this.entityFollow.standardScale;
-		//this.worldMap.y += (this.velocity.y + this.velocityPlus.y) * delta // this.entityFollow.standardScale;
 	}
 	
 }
