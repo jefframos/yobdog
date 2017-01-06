@@ -53,7 +53,7 @@ export default class LoadScreen extends Screen{
 				height:0
 			}
 			if(mapLayers[i].name.indexOf('Pattern')  !== -1){
-				console.log(mapLayers[i]);
+				// console.log(mapLayers[i]);
 				if(mapLayers[i].properties && mapLayers[i].properties.first){
 					levelObj.first = true;
 				}
@@ -76,11 +76,11 @@ export default class LoadScreen extends Screen{
 			}
 		}
 
-		console.log('levelsssss',this.levels);
+		// console.log('levelsssss',this.levels);
 		for (var i = 0; i < this.levels.length; i++) {
 			let level = this.levels[i];
 			for (var j = 0; j < level.walls.length; j++) {
-				console.log(level);
+				// console.log(level);
 				level.walls[j].y -= level.endZone.y;
 			}
 			

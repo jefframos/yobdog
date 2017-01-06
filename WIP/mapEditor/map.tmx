@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="12" height="48" tilewidth="32" tileheight="32" nextobjectid="26">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="12" height="48" tilewidth="32" tileheight="32" nextobjectid="106">
  <objectgroup name="Pattern1" visible="0">
-  <object id="2" type="wall" x="347" y="994" width="202" height="542"/>
+  <object id="2" type="wall" x="285" y="994" width="264" height="542"/>
   <object id="3" type="wall" x="73" y="532" width="45" height="451"/>
   <object id="4" type="wall" x="-185" y="778" width="226" height="756"/>
   <object id="5" type="wall" x="338" y="153" width="241" height="641"/>
   <object id="6" type="wall" x="-100" y="3" width="151" height="677"/>
-  <object id="7" type="endzone" x="-97" y="-6">
+  <object id="7" type="endzone" x="-97" y="4">
    <polyline points="0,0 662,4"/>
   </object>
-  <object id="8" type="beginzone" x="-166" y="1542">
+  <object id="8" type="beginzone" x="-166" y="1530">
    <polyline points="0,0 714,4"/>
   </object>
   <object id="9" type="wall" x="-506" y="-55" width="151" height="1623"/>
@@ -21,26 +21,125 @@
   <object id="19" type="wall" x="-185" y="866" width="226" height="668"/>
   <object id="20" type="wall" x="338" y="153" width="241" height="821"/>
   <object id="21" type="wall" x="-100" y="3" width="151" height="623"/>
-  <object id="22" type="endzone" x="-97" y="-6">
+  <object id="22" type="endzone" x="-97" y="2">
    <polyline points="0,0 662,4"/>
   </object>
-  <object id="23" type="beginzone" x="-166" y="1542">
+  <object id="23" type="beginzone" x="-166" y="1532">
    <polyline points="0,0 714,4"/>
   </object>
   <object id="24" type="wall" x="-506" y="-55" width="151" height="1623"/>
   <object id="25" type="wall" x="762" y="-59" width="151" height="1623"/>
+  <object id="26" type="wall" x="211" y="370" width="202" height="190"/>
  </objectgroup>
- <objectgroup name="Pattern0" visible="0">
+ <objectgroup name="Pattern0">
   <properties>
    <property name="first" type="bool" value="true"/>
   </properties>
-  <object id="13" type="wall" x="350" y="-4" width="472" height="1410"/>
-  <object id="14" type="wall" x="-408" y="0" width="434" height="1408"/>
-  <object id="15" type="beginzone" x="-164" y="1408">
+  <object id="13" type="wall" x="230" y="-4" width="592" height="1412"/>
+  <object id="14" type="wall" x="-408" y="0" width="406" height="1408"/>
+  <object id="15" type="beginzone" x="-164" y="1399">
    <polyline points="0,0 722,0"/>
   </object>
-  <object id="16" type="endzone" x="-112" y="0">
+  <object id="16" type="endzone" x="-112" y="7">
    <polyline points="0,0 664,-2"/>
   </object>
+ </objectgroup>
+ <objectgroup name="Pattern4" visible="0">
+  <object id="36" type="wall" x="770.5" y="-27.5" width="151" height="1623"/>
+  <object id="37" type="wall" x="-497.5" y="-23.5" width="151" height="1623"/>
+  <object id="38" type="beginzone" x="-157.5" y="1561.5">
+   <polyline points="0,0 714,4"/>
+  </object>
+  <object id="39" type="endzone" x="-88.5" y="35.5">
+   <polyline points="0,0 662,4"/>
+  </object>
+  <object id="40" type="wall" x="-91.5" y="34.5" width="151" height="677"/>
+  <object id="41" type="wall" x="358.5" y="760.5" width="241" height="641"/>
+  <object id="42" type="wall" x="-176.5" y="809.5" width="226" height="756"/>
+  <object id="43" type="wall" x="195.5" y="209.5" width="125" height="451"/>
+ </objectgroup>
+ <objectgroup name="Pattern5" visible="0">
+  <object id="45" type="wall" x="770.5" y="-27.5" width="151" height="1623"/>
+  <object id="46" type="wall" x="-497.5" y="-23.5" width="151" height="1623"/>
+  <object id="47" type="beginzone" x="-157.5" y="1561.5">
+   <polyline points="0,0 714,4"/>
+  </object>
+  <object id="48" type="endzone" x="-88.5" y="35.5">
+   <polyline points="0,0 662,4"/>
+  </object>
+  <object id="49" type="wall" x="-159.5" y="30.5" width="151" height="677"/>
+  <object id="50" type="wall" x="390.5" y="34.5" width="241" height="641"/>
+  <object id="51" type="wall" x="-230.5" y="805.5" width="226" height="756"/>
+  <object id="52" type="wall" x="177.5" y="307.5" width="45" height="937"/>
+  <object id="53" type="wall" x="387.5" y="1023.5" width="264" height="542"/>
+ </objectgroup>
+ <objectgroup name="Pattern6" visible="0">
+  <object id="54" type="wall" x="770.5" y="-27.5" width="151" height="1623"/>
+  <object id="55" type="wall" x="-497.5" y="-23.5" width="151" height="1623"/>
+  <object id="56" type="beginzone" x="-157.5" y="1561.5">
+   <polyline points="0,0 714,4"/>
+  </object>
+  <object id="57" type="endzone" x="-88.5" y="35.5">
+   <polyline points="0,0 662,4"/>
+  </object>
+  <object id="61" type="wall" x="-0.5" y="1119.5" width="45" height="451"/>
+  <object id="101" type="wall" x="329.5" y="980.5" width="45" height="451"/>
+  <object id="102" type="wall" x="-2.5" y="264.5" width="45" height="451"/>
+  <object id="103" type="wall" x="169.5" y="702.5" width="45" height="451"/>
+  <object id="104" type="wall" x="327.5" y="332.5" width="45" height="451"/>
+  <object id="105" type="wall" x="173.5" y="8.5" width="45" height="451"/>
+ </objectgroup>
+ <objectgroup name="Pattern7" visible="0">
+  <object id="63" type="wall" x="770.5" y="-27.5" width="151" height="1623"/>
+  <object id="64" type="wall" x="-497.5" y="-23.5" width="151" height="1623"/>
+  <object id="65" type="beginzone" x="-157.5" y="1561.5">
+   <polyline points="0,0 714,4"/>
+  </object>
+  <object id="66" type="endzone" x="-88.5" y="35.5">
+   <polyline points="0,0 662,4"/>
+  </object>
+  <object id="67" type="wall" x="-91.5" y="34.5" width="151" height="677"/>
+  <object id="68" type="wall" x="352.5" y="38.5" width="241" height="641"/>
+  <object id="70" type="wall" x="159.5" y="1123.5" width="45" height="451"/>
+ </objectgroup>
+ <objectgroup name="Pattern8" visible="0">
+  <object id="72" type="wall" x="770.5" y="-27.5" width="151" height="1623"/>
+  <object id="73" type="wall" x="-497.5" y="-23.5" width="151" height="1623"/>
+  <object id="74" type="beginzone" x="-157.5" y="1561.5">
+   <polyline points="0,0 714,4"/>
+  </object>
+  <object id="75" type="endzone" x="-88.5" y="35.5">
+   <polyline points="0,0 662,4"/>
+  </object>
+  <object id="79" type="wall" x="161.5" y="99.5" width="45" height="1363"/>
+ </objectgroup>
+ <objectgroup name="Pattern9" visible="0">
+  <object id="81" type="wall" x="770.5" y="-27.5" width="151" height="1623"/>
+  <object id="82" type="wall" x="-497.5" y="-23.5" width="151" height="1623"/>
+  <object id="83" type="beginzone" x="-157.5" y="1561.5">
+   <polyline points="0,0 714,4"/>
+  </object>
+  <object id="84" type="endzone" x="-88.5" y="35.5">
+   <polyline points="0,0 662,4"/>
+  </object>
+  <object id="85" type="wall" x="-249.5" y="34.5" width="151" height="677"/>
+  <object id="86" type="wall" x="448.5" y="72.5" width="241" height="641"/>
+  <object id="87" type="wall" x="-112.5" y="733.5" width="226" height="756"/>
+  <object id="88" type="wall" x="175.5" y="393.5" width="45" height="451"/>
+  <object id="89" type="wall" x="387.5" y="909.5" width="264" height="542"/>
+ </objectgroup>
+ <objectgroup name="Pattern10" visible="0">
+  <object id="90" type="wall" x="770.5" y="-27.5" width="151" height="1623"/>
+  <object id="91" type="wall" x="-497.5" y="-23.5" width="151" height="1623"/>
+  <object id="92" type="beginzone" x="-157.5" y="1561.5">
+   <polyline points="0,0 714,4"/>
+  </object>
+  <object id="93" type="endzone" x="-88.5" y="35.5">
+   <polyline points="0,0 662,4"/>
+  </object>
+  <object id="95" type="wall" x="346.5" y="184.5" width="241" height="641"/>
+  <object id="96" type="wall" x="-176.5" y="809.5" width="226" height="756"/>
+  <object id="97" type="wall" x="173.5" y="233.5" width="45" height="451"/>
+  <object id="98" type="wall" x="293.5" y="1025.5" width="264" height="542"/>
  </objectgroup>
 </map>

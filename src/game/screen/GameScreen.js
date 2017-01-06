@@ -12,6 +12,8 @@ import Camera from '../Camera';
 export default class GameScreen extends Screen{
 	constructor(label){
 		super(label);
+
+		window.gamee = this;
 	}
 
 	
@@ -26,42 +28,49 @@ export default class GameScreen extends Screen{
 		this.addChild(this.gameContainer)
 		
 
-		this.player = new Player(this);
+		this.camera = new Camera(this, this.gameContainer);
+		
+		this.endZoneLine = new PIXI.Graphics().beginFill(0x00ffff).drawRect(-500,0,config.width + 1000, 5);
+		this.gameContainer.addChild(this.endZoneLine);
+		
+		this.resetGame();
+		
+	}
+		//destroy game
+	destroyGame(){
+		while(this.gameContainer.children.length){
+			this.gameContainer.removeChildAt(0);
+		}
+		this.removeEvents();
+	}
+	resetGame(){
 
+		this.player = new Player(this);
 		this.player.x = config.width / 2;
 		this.player.y = -config.height/2;
 		this.gameContainer.addChild(this.player);
 
-		this.camera = new Camera(this, this.gameContainer);
-		this.camera.follow(this.player)
+		this.updateList = [];
+		this.updateList.push(this.player);
 
 		this.wallList = [];
 		this.addEvents();
 
-		this.updateList = [];
-		this.updateList.push(this.player);
-
 		this.gameSpeed = 350;
-
-		// this.addWalls()
-
-		this.wallTimer = 0.5;
-		this.middleWallTimer = 3;
-
-		this.endZoneLine = new PIXI.Graphics().beginFill(0x00ffff).drawRect(-500,0,config.width + 1000, 5);
-		this.gameContainer.addChild(this.endZoneLine);
 		this.addWall2({x:-150, y:-config.height*2}, [0, 0, 200, 0, 200,config.height*2 , 0, config.height*2])
 		this.addWall2({x:config.width - 50, y:-config.height*2}, [0, 0, 200, 0, 200,config.height*2 , 0, config.height*2])
-
+		// this.addWall2({x:config.width - 200, y:-config.height*2}, [0, 0, 200, 0, 200,config.height*2 , 0, config.height*2])
 		this.player.jump(true);
 		this.endZone = 0;
 		this.beginZone = 0;
 		this.buildPattern(true);
+		this.camera.follow(this.player)
+
 	}
 	addWall2(pos, shape, type = 'standard'){
-		if(Math.random() < 0.2){
-			type = 'slippery';
-		}
+		// if(Math.random() < 0.2){
+		// 	type = 'slippery';
+		// }
 		let wall = new Wall(this, type, shape);
 		this.gameContainer.addChild(wall)
 		this.wallList.push(wall);
@@ -95,18 +104,18 @@ export default class GameScreen extends Screen{
 		wall.velocity.y = this.gameSpeed;
 		this.updateList.push(wall);
 	}
-
-	normalSpeed(){
-		this.gameSpeed = 350;
+	updateSpeed(){
 		for (var i = 0; i < this.wallList.length; i++) {
 			this.wallList[i].velocity.y = this.gameSpeed;
 		}
 	}
+	normalSpeed(){
+		this.gameSpeed = 350;
+		this.updateSpeed();
+	}
 	reduceSpeed(){
 		this.gameSpeed = 150;
-		for (var i = 0; i < this.wallList.length; i++) {
-			this.wallList[i].velocity.y = this.gameSpeed;
-		}
+		this.updateSpeed();
 	}
 	buildPattern(first){
 		if(first){
@@ -205,16 +214,18 @@ export default class GameScreen extends Screen{
 	selectMenu(){
 		
 	}
-	//destroy game
-	destroyGame(){
-		while(this.gameContainer.children.length){
 
-			this.gameContainer.removeChildAt(0);
-		}
-		this.removeEvents();
-	}
 	
 	gameOver() {
+		this.camera.shake(1,20,0.5);
+		this.camera.zoomBounce(0.5,2);
+		this.gameSpeed = 0;
+		this.finishingGame = true;
+		this.updateSpeed();
+
+		// this.destroyGame();
+
+		// this.resetGame();
 		
 	}
 	//SCREEN
@@ -230,29 +241,32 @@ export default class GameScreen extends Screen{
 	}
 	
 	update(delta){
+		// delta *= 0.25
 		super.update(delta);
 
 		// return
 
-		this.endZone += delta * this.gameSpeed;
-		this.endZoneLine.y = this.endZone;
-		if(this.endZone > 0){
-			// return
-			this.buildPattern();
+		if(!this.finishingGame){
+			this.endZone += delta * this.gameSpeed;
+			this.endZoneLine.y = this.endZone;
+			if(this.endZone > 0){
+				// return
+				this.buildPattern();
+			}
 		}
 		// console.log(this.endZone);
 		
-		this.wallTimer -= delta * (this.gameSpeed / 300);
-		if(this.wallTimer <= 0){
-			// this.addWalls();
-			this.wallTimer = 2
-		}
+		// this.wallTimer -= delta * (this.gameSpeed / 300);
+		// if(this.wallTimer <= 0){
+		// 	// this.addWalls();
+		// 	this.wallTimer = 2
+		// }
 
-		this.middleWallTimer -= delta* (this.gameSpeed / 300);
-		if(this.middleWallTimer <= 0){
-			// this.addMiddleWall();
-			this.middleWallTimer = 5
-		}
+		// this.middleWallTimer -= delta* (this.gameSpeed / 300);
+		// if(this.middleWallTimer <= 0){
+		// 	// this.addMiddleWall();
+		// 	this.middleWallTimer = 5
+		// }
 		// this.gameContainer.y += this.gameSpeed * delta;
 		for (var i = 0; i < this.wallList.length; i++) {
 			if(this.wallList[i].kill){

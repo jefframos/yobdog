@@ -36,6 +36,28 @@ export default class Camera{
 		this.updatePosition(true);
 	}
 
+	shake(force, steps, time){
+		if(!force){
+			force = 1;
+		}
+		if(!steps){
+			steps = 4;
+		}
+		if(!time){
+			time = 1;
+		}
+		let timelinePosition = new TimelineLite();
+		let positionForce = (force * 50);
+		let spliterForce = (force * 20);
+		let speed = time / steps;
+		let currentPosition = {x:this.worldMap.x, y:this.worldMap.y};
+		for (var i = steps; i >= 0; i--) {
+			timelinePosition.append(TweenLite.to(this.worldMap.position, speed, {x:currentPosition.x+ Math.random() * positionForce - positionForce/2, y:currentPosition.y+ Math.random() * positionForce - positionForce/2, ease:"easeNoneLinear"}));
+		};
+
+		timelinePosition.append(TweenLite.to(this.worldMap.position, speed, {x:currentPosition.x, y:currentPosition.y, ease:"easeeaseNoneLinear"}));		
+	}
+
 	unfollow(){
 		this.entityFollow = null;
 	}
@@ -64,6 +86,14 @@ export default class Camera{
 		this.currentZoom = value;	
 		TweenLite.killTweensOf(this.worldMap.scale)
 		TweenLite.to(this.worldMap.scale, time?time:0.5, {delay:delay?delay:0, x:this.currentZoom, y:this.currentZoom});//, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
+		//this.worldMap.scale.set(value);//, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
+	}
+	zoomBounce(value, time, delay){
+
+
+		this.currentZoom = value;	
+		TweenLite.killTweensOf(this.worldMap.scale)
+		TweenLite.to(this.worldMap.scale, time?time:0.5, {delay:delay?delay:0, x:this.currentZoom, y:this.currentZoom, ease:'easeOutBack'});//, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
 		//this.worldMap.scale.set(value);//, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
 	}
 	updatePosition(force){

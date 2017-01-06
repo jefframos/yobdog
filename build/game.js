@@ -37226,6 +37226,29 @@
 				this.updatePosition(true);
 			}
 		}, {
+			key: 'shake',
+			value: function shake(force, steps, time) {
+				if (!force) {
+					force = 1;
+				}
+				if (!steps) {
+					steps = 4;
+				}
+				if (!time) {
+					time = 1;
+				}
+				var timelinePosition = new TimelineLite();
+				var positionForce = force * 50;
+				var spliterForce = force * 20;
+				var speed = time / steps;
+				var currentPosition = { x: this.worldMap.x, y: this.worldMap.y };
+				for (var i = steps; i >= 0; i--) {
+					timelinePosition.append(TweenLite.to(this.worldMap.position, speed, { x: currentPosition.x + Math.random() * positionForce - positionForce / 2, y: currentPosition.y + Math.random() * positionForce - positionForce / 2, ease: "easeNoneLinear" }));
+				};
+	
+				timelinePosition.append(TweenLite.to(this.worldMap.position, speed, { x: currentPosition.x, y: currentPosition.y, ease: "easeeaseNoneLinear" }));
+			}
+		}, {
 			key: 'unfollow',
 			value: function unfollow() {
 				this.entityFollow = null;
@@ -37259,6 +37282,15 @@
 				this.currentZoom = value;
 				TweenLite.killTweensOf(this.worldMap.scale);
 				TweenLite.to(this.worldMap.scale, time ? time : 0.5, { delay: delay ? delay : 0, x: this.currentZoom, y: this.currentZoom }); //, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
+				//this.worldMap.scale.set(value);//, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
+			}
+		}, {
+			key: 'zoomBounce',
+			value: function zoomBounce(value, time, delay) {
+	
+				this.currentZoom = value;
+				TweenLite.killTweensOf(this.worldMap.scale);
+				TweenLite.to(this.worldMap.scale, time ? time : 0.5, { delay: delay ? delay : 0, x: this.currentZoom, y: this.currentZoom, ease: 'easeOutBack' }); //, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
 				//this.worldMap.scale.set(value);//, onUpdate:this.updatePosition.bind(this), onUpdateParams:[true]});
 			}
 		}, {
@@ -37417,7 +37449,10 @@
 		function GameScreen(label) {
 			_classCallCheck(this, GameScreen);
 	
-			return _possibleConstructorReturn(this, (GameScreen.__proto__ || Object.getPrototypeOf(GameScreen)).call(this, label));
+			var _this = _possibleConstructorReturn(this, (GameScreen.__proto__ || Object.getPrototypeOf(GameScreen)).call(this, label));
+	
+			window.gamee = _this;
+			return _this;
 		}
 	
 		_createClass(GameScreen, [{
@@ -37431,46 +37466,56 @@
 				this.gameContainer = new _pixi2.default.Container();
 				this.addChild(this.gameContainer);
 	
-				this.player = new _Player2.default(this);
+				this.camera = new _Camera2.default(this, this.gameContainer);
 	
+				this.endZoneLine = new _pixi2.default.Graphics().beginFill(0x00ffff).drawRect(-500, 0, _config2.default.width + 1000, 5);
+				this.gameContainer.addChild(this.endZoneLine);
+	
+				this.resetGame();
+			}
+			//destroy game
+	
+		}, {
+			key: 'destroyGame',
+			value: function destroyGame() {
+				while (this.gameContainer.children.length) {
+					this.gameContainer.removeChildAt(0);
+				}
+				this.removeEvents();
+			}
+		}, {
+			key: 'resetGame',
+			value: function resetGame() {
+	
+				this.player = new _Player2.default(this);
 				this.player.x = _config2.default.width / 2;
 				this.player.y = -_config2.default.height / 2;
 				this.gameContainer.addChild(this.player);
 	
-				this.camera = new _Camera2.default(this, this.gameContainer);
-				this.camera.follow(this.player);
+				this.updateList = [];
+				this.updateList.push(this.player);
 	
 				this.wallList = [];
 				this.addEvents();
 	
-				this.updateList = [];
-				this.updateList.push(this.player);
-	
 				this.gameSpeed = 350;
-	
-				// this.addWalls()
-	
-				this.wallTimer = 0.5;
-				this.middleWallTimer = 3;
-	
-				this.endZoneLine = new _pixi2.default.Graphics().beginFill(0x00ffff).drawRect(-500, 0, _config2.default.width + 1000, 5);
-				this.gameContainer.addChild(this.endZoneLine);
 				this.addWall2({ x: -150, y: -_config2.default.height * 2 }, [0, 0, 200, 0, 200, _config2.default.height * 2, 0, _config2.default.height * 2]);
 				this.addWall2({ x: _config2.default.width - 50, y: -_config2.default.height * 2 }, [0, 0, 200, 0, 200, _config2.default.height * 2, 0, _config2.default.height * 2]);
-	
+				// this.addWall2({x:config.width - 200, y:-config.height*2}, [0, 0, 200, 0, 200,config.height*2 , 0, config.height*2])
 				this.player.jump(true);
 				this.endZone = 0;
 				this.beginZone = 0;
 				this.buildPattern(true);
+				this.camera.follow(this.player);
 			}
 		}, {
 			key: 'addWall2',
 			value: function addWall2(pos, shape) {
 				var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'standard';
 	
-				if (Math.random() < 0.2) {
-					type = 'slippery';
-				}
+				// if(Math.random() < 0.2){
+				// 	type = 'slippery';
+				// }
 				var wall = new _Wall2.default(this, type, shape);
 				this.gameContainer.addChild(wall);
 				this.wallList.push(wall);
@@ -37507,20 +37552,23 @@
 				this.updateList.push(wall);
 			}
 		}, {
-			key: 'normalSpeed',
-			value: function normalSpeed() {
-				this.gameSpeed = 350;
+			key: 'updateSpeed',
+			value: function updateSpeed() {
 				for (var i = 0; i < this.wallList.length; i++) {
 					this.wallList[i].velocity.y = this.gameSpeed;
 				}
 			}
 		}, {
+			key: 'normalSpeed',
+			value: function normalSpeed() {
+				this.gameSpeed = 350;
+				this.updateSpeed();
+			}
+		}, {
 			key: 'reduceSpeed',
 			value: function reduceSpeed() {
 				this.gameSpeed = 150;
-				for (var i = 0; i < this.wallList.length; i++) {
-					this.wallList[i].velocity.y = this.gameSpeed;
-				}
+				this.updateSpeed();
 			}
 		}, {
 			key: 'buildPattern',
@@ -37623,20 +37671,19 @@
 		}, {
 			key: 'selectMenu',
 			value: function selectMenu() {}
-			//destroy game
-	
-		}, {
-			key: 'destroyGame',
-			value: function destroyGame() {
-				while (this.gameContainer.children.length) {
-	
-					this.gameContainer.removeChildAt(0);
-				}
-				this.removeEvents();
-			}
 		}, {
 			key: 'gameOver',
-			value: function gameOver() {}
+			value: function gameOver() {
+				this.camera.shake(1, 20, 0.5);
+				this.camera.zoomBounce(0.5, 2);
+				this.gameSpeed = 0;
+				this.finishingGame = true;
+				this.updateSpeed();
+	
+				// this.destroyGame();
+	
+				// this.resetGame();
+			}
 			//SCREEN
 	
 	
@@ -37653,29 +37700,32 @@
 		}, {
 			key: 'update',
 			value: function update(delta) {
+				// delta *= 0.25
 				_get(GameScreen.prototype.__proto__ || Object.getPrototypeOf(GameScreen.prototype), 'update', this).call(this, delta);
 	
 				// return
 	
-				this.endZone += delta * this.gameSpeed;
-				this.endZoneLine.y = this.endZone;
-				if (this.endZone > 0) {
-					// return
-					this.buildPattern();
+				if (!this.finishingGame) {
+					this.endZone += delta * this.gameSpeed;
+					this.endZoneLine.y = this.endZone;
+					if (this.endZone > 0) {
+						// return
+						this.buildPattern();
+					}
 				}
 				// console.log(this.endZone);
 	
-				this.wallTimer -= delta * (this.gameSpeed / 300);
-				if (this.wallTimer <= 0) {
-					// this.addWalls();
-					this.wallTimer = 2;
-				}
+				// this.wallTimer -= delta * (this.gameSpeed / 300);
+				// if(this.wallTimer <= 0){
+				// 	// this.addWalls();
+				// 	this.wallTimer = 2
+				// }
 	
-				this.middleWallTimer -= delta * (this.gameSpeed / 300);
-				if (this.middleWallTimer <= 0) {
-					// this.addMiddleWall();
-					this.middleWallTimer = 5;
-				}
+				// this.middleWallTimer -= delta* (this.gameSpeed / 300);
+				// if(this.middleWallTimer <= 0){
+				// 	// this.addMiddleWall();
+				// 	this.middleWallTimer = 5
+				// }
 				// this.gameContainer.y += this.gameSpeed * delta;
 				for (var i = 0; i < this.wallList.length; i++) {
 					if (this.wallList[i].kill) {
@@ -37792,19 +37842,29 @@
 			_this.playerContainer = new _pixi2.default.Container();
 			_this.addChild(_this.playerContainer);
 			_this.playerView = new _pixi2.default.Graphics().beginFill(0xff5555).drawCircle(0, 0, _this.radius);
+			_this.headView = new _pixi2.default.Graphics().beginFill(0xff55ff).drawCircle(0, 0, _this.radius / 2);
 	
 			_this.velocity = { x: 0, y: 0 };
 			_this.speed = { x: 1300, y: -20 };
+			_this.gravity = 1500;
 			_this.playerContainer.addChild(_this.playerView);
+			_this.headView.y = -_this.radius;
+			_this.playerContainer.addChild(_this.headView);
 	
 			_this.side = 1;
 			_this.currentStickedWall = null;
+	
+			_this.falling = false;
+	
 			return _this;
 		}
 	
 		_createClass(Player, [{
 			key: 'jump',
 			value: function jump(force) {
+				if (this.falling) {
+					return;
+				}
 				if (!this.currentStickedWall && !force) {
 					return;
 				}
@@ -37815,13 +37875,44 @@
 				this.game.camera.zoom(0.5, 1);
 			}
 		}, {
+			key: 'getHeadBounds',
+			value: function getHeadBounds() {
+				return { x: this.x + this.headView.x - this.headView.width / 2, y: this.y + this.headView.y - this.headView.height / 2,
+					width: this.headView.width, height: this.headView.height };
+			}
+		}, {
+			key: 'headCollision',
+			value: function headCollision() {
+				this.headView.tint = 0xFFFFFF;
+				for (var i = 0; i < this.game.wallList.length; i++) {
+					var wallBounds = this.game.wallList[i].getHeadHitBounds();
+					var headBounds = this.getHeadBounds();
+					if (headBounds.x < wallBounds.x + wallBounds.width && headBounds.x + headBounds.width > wallBounds.x && headBounds.y < wallBounds.y + wallBounds.height && headBounds.height + headBounds.y > wallBounds.y) {
+						this.headView.tint = 0xFF0000;
+						this.game.wallList[i].wallView.tint = 0x0000ff;
+						return true;
+					} else {
+						this.game.wallList[i].wallView.tint = 0xffffff;
+					}
+					// if(test){
+					// 	return this.game.wallList[i];
+					// }
+				}
+				// return null
+			}
+		}, {
 			key: 'wallCollide',
 			value: function wallCollide() {
 				for (var i = 0; i < this.game.wallList.length; i++) {
-					var test = this.game.wallList[i].getBounds().contains(this.x + this.getRadius() * this.side, this.y + this.getRadius() / 2) || this.game.wallList[i].getBounds().contains(this.x + this.getRadius() * this.side, this.y - this.getRadius() / 2);
 	
+					var test = this.velocity.x < 0 && this.game.wallList[i].getPolygon().contains(this.x - this.getRadius(), this.y //4
+					) || this.velocity.x > 0 && this.game.wallList[i].getPolygon().contains(this.x + this.getRadius(), this.y //4
+					);
 					if (test) {
+						this.game.wallList[i].wallView.tint = 0xff0000;
 						return this.game.wallList[i];
+					} else {
+						this.game.wallList[i].wallView.tint = 0xffffff;
 					}
 				}
 				return null;
@@ -37846,22 +37937,56 @@
 					this.x = wall.x;
 				}
 				this.game.camera.zoom(1);
-				// this.game.camera.zoom2(1);
 			}
 		}, {
 			key: 'getRadius',
 			value: function getRadius() {
-				return this.scale.x * this.radius;
+				return this.playerContainer.scale.x * this.radius;
 			}
 		}, {
-			key: 'update',
-			value: function update(delta) {
+			key: 'die',
+			value: function die() {
+				this.game.gameOver();
+				_gsap2.default.to(this.playerContainer.scale, 0.3, { x: 1, y: 1, ease: 'easeOutBounce' });
+				this.falling = true;
+				this.gameOver = true;
+				this.velocity.x *= -0.2;
+				this.velocity.y = 0;
+			}
+		}, {
+			key: 'dyingLoop',
+			value: function dyingLoop(delta) {
+				this.game.camera.unfollow();
 	
+				this.velocity.y += this.gravity * delta;
+	
+				this.playerContainer.rotation = Math.atan2(this.velocity.y, this.velocity.x) - 3.14;
+	
+				this.x += this.velocity.x * delta;
+				this.y += this.velocity.y * delta;
+	
+				if (this.y > _config2.default.height) {
+					this.kill = true;
+				}
+			}
+		}, {
+			key: 'jumpingLoop',
+			value: function jumpingLoop(delta) {
 				//this.velocity.y = -this.game.gameSpeed;
+				// console.log(this.velocity);
+				var headCollision = this.headCollision();
+				if (headCollision) {
+					this.die();
+					return;
+				}
 				if (this.velocity.x && !this.currentStickedWall) {
 					this.playerContainer.scale.x = 1.5;
 					this.playerContainer.scale.y = 0.5;
-					this.playerContainer.rotation = -Math.atan2(this.game.gameSpeed, this.velocity.x);
+					if (this.velocity.x < 0) {
+						this.playerContainer.rotation = Math.atan2(this.game.gameSpeed, Math.abs(this.velocity.x));
+					} else {
+						this.playerContainer.rotation = -Math.atan2(this.game.gameSpeed, Math.abs(this.velocity.x));
+					}
 				}
 				var wallCollide = this.wallCollide();
 				if (!wallCollide) {
@@ -37872,6 +37997,15 @@
 					this.stickWall(wallCollide);
 				}
 				this.y += this.velocity.y * delta;
+			}
+		}, {
+			key: 'update',
+			value: function update(delta) {
+				if (!this.falling) {
+					this.jumpingLoop(delta);
+				} else {
+					this.dyingLoop(delta);
+				}
 			}
 		}]);
 	
@@ -37939,12 +38073,26 @@
 			_this.side = 1;
 	
 			_this.velocity = { x: 0, y: 0 };
+	
+			window.wall = _this;
 			return _this;
 		}
 	
 		_createClass(Wall, [{
+			key: 'getHeadHitBounds',
+			value: function getHeadHitBounds() {
+				var h = 50;
+				var w = 40;
+				return { x: this.x + w / 2, y: this.y + this.wallView.height - 50, width: this.wallView.width - w, height: 50 };
+			}
+		}, {
 			key: 'getBounds',
 			value: function getBounds() {
+				return { x: this.x, y: this.y, width: this.wallView.width, height: this.wallView.height };
+			}
+		}, {
+			key: 'getPolygon',
+			value: function getPolygon() {
 				this.applyPolygonPosition();
 				return this.polygon;
 			}
@@ -38074,7 +38222,7 @@
 						height: 0
 					};
 					if (mapLayers[i].name.indexOf('Pattern') !== -1) {
-						console.log(mapLayers[i]);
+						// console.log(mapLayers[i]);
 						if (mapLayers[i].properties && mapLayers[i].properties.first) {
 							levelObj.first = true;
 						}
@@ -38097,11 +38245,11 @@
 					}
 				}
 	
-				console.log('levelsssss', this.levels);
+				// console.log('levelsssss',this.levels);
 				for (var i = 0; i < this.levels.length; i++) {
 					var level = this.levels[i];
 					for (var j = 0; j < level.walls.length; j++) {
-						console.log(level);
+						// console.log(level);
 						level.walls[j].y -= level.endZone.y;
 					}
 				}

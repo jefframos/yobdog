@@ -25,8 +25,18 @@ export default class Wall extends PIXI.Container{
 		this.side = 1;
 
 		this.velocity = {x:0,y:0};
+
+		window.wall = this;
+	}
+	getHeadHitBounds(){
+		let h = 50;
+		let w = 40
+		return {x:this.x + w/2, y:this.y + this.wallView.height - 50, width:this.wallView.width - w, height:50};
 	}
 	getBounds(){
+		return {x:this.x, y:this.y, width:this.wallView.width, height:this.wallView.height};
+	}
+	getPolygon(){
 		this.applyPolygonPosition();
 		return this.polygon;
 	}
